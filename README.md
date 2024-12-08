@@ -57,15 +57,15 @@ mkdir install
 
 ## Cross Compile ##
 ```
-cmake -DCMAKE_TOOLCHAIN_FILE="my.cmake" .
+cmake -DCMAKE_TOOLCHAIN_FILE="cross.cmake" .
 make
 cmake --install . --prefix "./install"
 ```
 
 ## Compile this repo ##
-### Now we copile this sample repo using cross compile lvgl ###
+### Now we can compile this sample repo using cross compiled lvgl ###
 ```
 make clean;make
 ```
 
-## The target binary will be in bin folder.##
+The target binary will be in bin folder.
