@@ -3,7 +3,7 @@ This is for variant experiment with LVGL using Openwrt on Raspberrypi
 # Note: Here i have used Raspberrypi b+ #
 
 ## Do First : Steps to cross compile the lvgl source ##
-# Export toolchain #
+### Export toolchain ###
 ```
 PATH=$PATH:<Put_Path>/Raspi/openwrt/staging_dir/toolchain-arm_arm1176jzf-s+vfp_gcc-12.3.0_musl_eabi/bin
 export PATH
