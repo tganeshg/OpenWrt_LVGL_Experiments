@@ -1,22 +1,27 @@
 # OpenWrt_LVGL_Experiments
 This is for variant experiment with LVGL using Openwrt on Raspberrypi
-Note: Here i have used Raspberrypi b+
+# Note: Here i have used Raspberrypi b+ #
 
 ## Do First : Steps to cross compile the lvgl source ##
-<!-- /* Export toolchain */ -->
-
+# Export toolchain #
+```
 PATH=$PATH:<Put_Path>/Raspi/openwrt/staging_dir/toolchain-arm_arm1176jzf-s+vfp_gcc-12.3.0_musl_eabi/bin
 export PATH
 STAGING_DIR=<Put_Path>/Raspi/openwrt/staging_dir
 export STAGING_DIR
+```
 
-<!-- Clone lvgl -->
-#Note: Clone it outside of this repo
-https://github.com/lvgl/lvgl.git
+# Clone lvgl #
+# Note: Clone it outside of this repo #
+```
+git clone https://github.com/lvgl/lvgl.git
 cd lvgl
+```
 
-<!-- Create cross compile cmake file -->
+# Create cross compile cmake file #
+```
 vi cross.cmake
+```
 
 ```
 set(CMAKE_SYSTEM_NAME Linux)
@@ -45,17 +50,22 @@ set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
 ```
 save the file with above content.
 
-#Create Install folder
+# Create Install folder #
+```
 mkdir install
+```
 
-#Cross Compile
+# Cross Compile #
+```
 cmake -DCMAKE_TOOLCHAIN_FILE="my.cmake" .
 make
 cmake --install . --prefix "./install"
+```
 
-<!-- Compile this repo -->
-#Now we copile this sample repo using cross compile lvgl
-
+#Compile this repo #
+# Now we copile this sample repo using cross compile lvgl #
+```
 make clean;make
+```
 
-#The target binary will be in bin folder.
+# The target binary will be in bin folder.#
