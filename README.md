@@ -18,6 +18,17 @@ git clone https://github.com/lvgl/lvgl.git
 cd lvgl
 ```
 
+## Create lvgl config file ##
+```
+cp lv_conf_template.h lv_conf.h
+```
+And update this line 0 to 1
+```
+#if 1 /* Set this to "1" to enable content */
+```
+Other cnfiguration also
+
+
 ## Create cross compile cmake file ##
 ```
 vi cross.cmake
