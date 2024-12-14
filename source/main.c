@@ -70,7 +70,7 @@ int main(int argc, char **argv)
 
     /*Create a Demo*/
     lv_demo_widgets();
-    lv_demo_widgets_start_slideshow();
+    //lv_demo_widgets_start_slideshow();
 
     lv_linux_run_loop();
 
