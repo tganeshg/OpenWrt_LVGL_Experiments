@@ -8,19 +8,10 @@
 #include "lvgl/lvgl.h"
 #include "lvgl/demos/lv_demos.h"
 
+#define LV_LINUX_FBDEV_DEVICE               "/dev/fb0"
 #define LV_LINUX_EVDEV_POINTER_DEVICE       "/dev/input/event0"
-#define LV_SIM_WINDOW_WIDTH                 800
-#define LV_SIM_WINDOW_HEIGHT                480
-
-uint16_t window_width = LV_SIM_WINDOW_WIDTH;
-uint16_t window_height = LV_SIM_WINDOW_HEIGHT;
 
 /*** Private ***/
-static const char *getenv_default(const char *name, const char *dflt)
-{
-    return getenv(name) ? : dflt;
-}
-
 #if LV_USE_EVDEV
 static void lv_linux_init_input_pointer(lv_display_t *disp)
 {
@@ -43,7 +34,7 @@ static void lv_linux_init_input_pointer(lv_display_t *disp)
 #if LV_USE_LINUX_FBDEV
 static void lv_linux_disp_init(void)
 {
-    const char *device = getenv_default("LV_LINUX_FBDEV_DEVICE", "/dev/fb0");
+    const char *device = LV_LINUX_FBDEV_DEVICE;
     lv_display_t * disp = lv_linux_fbdev_create();
 
 #if LV_USE_EVDEV
