@@ -35,6 +35,7 @@ static void profile_create(lv_obj_t * parent);
 static void analytics_create(lv_obj_t * parent);
 static void shop_create(lv_obj_t * parent);
 static void color_changer_create(lv_obj_t * parent);
+static void menu_create(void);
 
 static lv_obj_t * create_scale_box(lv_obj_t * parent, const char * title, const char * text1, const char * text2,
                                    const char * text3);
@@ -63,7 +64,7 @@ static void tabview_delete_event_cb(lv_event_t * e);
 /**********************
  *  STATIC VARIABLES
  **********************/
-static disp_size_t disp_size;
+static disp_size_t disp_size = DISP_LARGE;
 
 static lv_obj_t * tv;
 static lv_obj_t * calendar;
@@ -115,57 +116,16 @@ static lv_obj_t * scale3_mbps_label;
 
 void lv_demo_widgets(void)
 {
-    if(LV_HOR_RES <= 320) disp_size = DISP_SMALL;
-    else if(LV_HOR_RES < 720) disp_size = DISP_MEDIUM;
-    else disp_size = DISP_LARGE;
-
-    font_large = LV_FONT_DEFAULT;
-    font_normal = LV_FONT_DEFAULT;
-
-    int32_t tab_h;
-    if(disp_size == DISP_LARGE) {
-        tab_h = 70;
+    int32_t tab_h = 80;
 #if LV_FONT_MONTSERRAT_24
-        font_large     = &lv_font_montserrat_24;
-#else
-        LV_LOG_WARN("LV_FONT_MONTSERRAT_24 is not enabled for the widgets demo. Using LV_FONT_DEFAULT instead.");
+    font_large = &lv_font_montserrat_24;
 #endif
 #if LV_FONT_MONTSERRAT_16
-        font_normal    = &lv_font_montserrat_16;
-#else
-        LV_LOG_WARN("LV_FONT_MONTSERRAT_16 is not enabled for the widgets demo. Using LV_FONT_DEFAULT instead.");
+    font_normal = &lv_font_montserrat_16;
 #endif
-    }
-    else if(disp_size == DISP_MEDIUM) {
-        tab_h = 45;
-#if LV_FONT_MONTSERRAT_20
-        font_large     = &lv_font_montserrat_20;
-#else
-        LV_LOG_WARN("LV_FONT_MONTSERRAT_20 is not enabled for the widgets demo. Using LV_FONT_DEFAULT instead.");
-#endif
-#if LV_FONT_MONTSERRAT_14
-        font_normal    = &lv_font_montserrat_14;
-#else
-        LV_LOG_WARN("LV_FONT_MONTSERRAT_14 is not enabled for the widgets demo. Using LV_FONT_DEFAULT instead.");
-#endif
-    }
-    else {   /* disp_size == DISP_SMALL */
-        tab_h = 45;
-#if LV_FONT_MONTSERRAT_18
-        font_large     = &lv_font_montserrat_18;
-#else
-        LV_LOG_WARN("LV_FONT_MONTSERRAT_18 is not enabled for the widgets demo. Using LV_FONT_DEFAULT instead.");
-#endif
-#if LV_FONT_MONTSERRAT_12
-        font_normal    = &lv_font_montserrat_12;
-#else
-        LV_LOG_WARN("LV_FONT_MONTSERRAT_12 is not enabled for the widgets demo. Using LV_FONT_DEFAULT instead.");
-#endif
-    }
 
 #if LV_USE_THEME_DEFAULT
-    lv_theme_default_init(NULL, lv_palette_main(LV_PALETTE_BLUE), lv_palette_main(LV_PALETTE_RED), LV_THEME_DEFAULT_DARK,
-                          font_normal);
+    lv_theme_default_init(NULL, lv_palette_main(LV_PALETTE_BLUE), lv_palette_main(LV_PALETTE_RED), LV_THEME_DEFAULT_DARK,font_normal);
 #endif
 
     lv_style_init(&style_text_muted);
@@ -188,9 +148,9 @@ void lv_demo_widgets(void)
 
     lv_obj_set_style_text_font(lv_screen_active(), font_normal, 0);
 
-    lv_obj_t * t1 = lv_tabview_add_tab(tv, "Data");
-    lv_obj_t * t2 = lv_tabview_add_tab(tv, "Settings");
-    lv_obj_t * t3 = lv_tabview_add_tab(tv, "Network");
+    //lv_obj_t * t1 = lv_tabview_add_tab(tv, "Menu");
+    //lv_obj_t * t2 = lv_tabview_add_tab(tv, "Settings");
+    //lv_obj_t * t3 = lv_tabview_add_tab(tv, "About");
 
     if(disp_size == DISP_LARGE) {
         lv_obj_t * tab_bar = lv_tabview_get_tab_bar(tv);
@@ -204,21 +164,22 @@ void lv_demo_widgets(void)
         lv_obj_t * label = lv_label_create(tab_bar);
         lv_obj_add_style(label, &style_title, 0);
         lv_obj_add_flag(label, LV_OBJ_FLAG_IGNORE_LAYOUT);
-        lv_label_set_text_fmt(label, "LVGL v%d.%d.%d", lv_version_major(), lv_version_minor(), lv_version_patch());
+        lv_label_set_text_fmt(label, "MDCU v%d.%d.%d", lv_version_major(), lv_version_minor(), lv_version_patch());
         lv_obj_align_to(label, logo, LV_ALIGN_OUT_RIGHT_TOP, 10, 0);
 
         label = lv_label_create(tab_bar);
-        lv_label_set_text_static(label, "Widgets demo");
+        lv_label_set_text_static(label, "Mini DCU");
         lv_obj_add_flag(label, LV_OBJ_FLAG_IGNORE_LAYOUT);
         lv_obj_add_style(label, &style_text_muted, 0);
         lv_obj_align_to(label, logo, LV_ALIGN_OUT_RIGHT_BOTTOM, 10, 0);
     }
 
-    profile_create(t1);
-    analytics_create(t2);
-    shop_create(t3);
+    //profile_create(t1);
+    //analytics_create(t2);
+    menu_create();
+    //shop_create(t3);
 
-    color_changer_create(tv);
+    //color_changer_create(tv);
 }
 
 void lv_demo_widgets_start_slideshow(void)
@@ -245,6 +206,42 @@ void lv_demo_widgets_start_slideshow(void)
 /**********************
  *   STATIC FUNCTIONS
  **********************/
+static void event_cb(lv_event_t * e)
+{
+    lv_obj_t * dropdown = lv_event_get_target(e);
+    char buf[64]={0};
+    lv_dropdown_get_selected_str(dropdown, buf, sizeof(buf));
+    LV_LOG_USER("'%s' is selected", buf);
+}
+
+static void menu_create(void)
+{
+#if LV_USE_DROPDOWN && LV_BUILD_EXAMPLES
+    /*Create a drop down list*/
+    lv_obj_t * dropdown = lv_dropdown_create(lv_scr_act());
+    lv_obj_align(dropdown, LV_ALIGN_TOP_RIGHT, -35, 20);
+    lv_dropdown_set_options(dropdown,   "Overview\n"
+                                        "Protocols\n"
+                                        "Settings\n"
+                                        "About\n"
+                                        "Exit");
+
+    /*Set a fixed text to display on the button of the drop-down list*/
+    lv_dropdown_set_text(dropdown, "Menu");
+    lv_obj_set_size(dropdown,100,50);
+
+  /*Use a custom image as down icon and flip it when the list is opened*/
+    LV_IMG_DECLARE(img_caret_down)
+    lv_dropdown_set_symbol(dropdown, &img_caret_down);
+    lv_obj_set_style_transform_angle(dropdown, 1800, LV_PART_INDICATOR | LV_STATE_CHECKED);
+
+    /*In a menu we don't need to show the last clicked item*/
+    lv_dropdown_set_selected_highlight(dropdown, true);
+
+    lv_obj_add_event_cb(dropdown, event_cb, LV_EVENT_VALUE_CHANGED, NULL);
+#endif
+}
+
 
 static void profile_create(lv_obj_t * parent)
 {
