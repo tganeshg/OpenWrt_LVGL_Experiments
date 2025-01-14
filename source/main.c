@@ -1,12 +1,6 @@
-#include <unistd.h>
-#include <pthread.h>
-#include <time.h>
-#include <stdio.h>
-#include <stdlib.h>
-
 #include "lvgl/lv_conf.h"
-#include "lvgl/lvgl.h"
 #include "lvgl/demos/lv_demos.h"
+#include "menu.h"
 
 #define LV_LINUX_FBDEV_DEVICE               "/dev/fb0"
 #define LV_LINUX_EVDEV_POINTER_DEVICE       "/dev/input/event0"
@@ -47,18 +41,6 @@ static void lv_linux_disp_init(void)
     #error Unsupported configuration
 #endif
 
-void lv_linux_run_loop(void)
-{
-    uint32_t idle_time;
-
-    /*Handle LVGL tasks*/
-    while(1) {
-
-        idle_time = lv_timer_handler(); /*Returns the time to the next timer execution*/
-        usleep(idle_time * 1000);
-    }
-}
-
 /* Main */
 int main(int argc, char **argv)
 {
@@ -69,10 +51,11 @@ int main(int argc, char **argv)
     lv_linux_disp_init();
 
     /*Create a Demo*/
-    lv_demo_widgets();
-    //lv_demo_widgets_start_slideshow();
+    menu_create();
 
-    lv_linux_run_loop();
+    menu_loop();
 
     return 0;
 }
+
+/* EOF */

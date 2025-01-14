@@ -22,11 +22,6 @@
 /**********************
  *      TYPEDEFS
  **********************/
-typedef enum {
-    DISP_SMALL,
-    DISP_MEDIUM,
-    DISP_LARGE,
-} disp_size_t;
 
 /**********************
  *  STATIC PROTOTYPES
@@ -35,12 +30,9 @@ static void profile_create(lv_obj_t * parent);
 static void analytics_create(lv_obj_t * parent);
 static void shop_create(lv_obj_t * parent);
 static void color_changer_create(lv_obj_t * parent);
-static void menu_create(void);
 
-static lv_obj_t * create_scale_box(lv_obj_t * parent, const char * title, const char * text1, const char * text2,
-                                   const char * text3);
-static lv_obj_t * create_shop_item(lv_obj_t * parent, const void * img_src, const char * name, const char * category,
-                                   const char * price);
+static lv_obj_t * create_scale_box(lv_obj_t * parent, const char * title, const char * text1, const char * text2,const char * text3);
+static lv_obj_t * create_shop_item(lv_obj_t * parent, const void * img_src, const char * name, const char * category,const char * price);
 
 static void color_changer_event_cb(lv_event_t * e);
 static void color_event_cb(lv_event_t * e);
@@ -106,17 +98,75 @@ static lv_style_t scale3_section3_tick_style;
 static lv_obj_t * scale3_needle;
 static lv_obj_t * scale3_mbps_label;
 
+static MAIN_MENU mMenu[mm_count] ={  {mm_overview_id,"Overview"},
+                                     {mm_protocols_id,"Protocols"},
+                                     {mm_com_id,"IOT"},
+                                     {mm_settings_id,"Settings"},
+                                     {mm_about_id,"About"} };
+static MAIN_MENU_INST mmInst;
+
 /**********************
- *      MACROS
+ *   STATIC FUNCTIONS
  **********************/
+static void mm_event_cb(lv_event_t * e)
+{
+    lv_obj_t * dropdown = lv_event_get_target(e);
+    mmInst.current_mmId = lv_dropdown_get_selected(dropdown);
+    LV_LOG_USER("'%d' is selected", mmInst.current_mmId);
+}
 
 /**********************
  *   GLOBAL FUNCTIONS
  **********************/
+void menu_loop(void)
+{
+    uint32_t idle_time = 0;
 
-void lv_demo_widgets(void)
+    /*Handle LVGL tasks*/
+    while(1) {
+        switch(mmInst.current_mmId)
+        {
+            case mm_overview_id:
+            {
+                //LV_LOG_USER("%s Need to show\n",mMenu[mmInst.current_mmId].mmName);
+            }
+            break;
+            case mm_protocols_id:
+            {
+                //LV_LOG_USER("%s Need to show\n",mMenu[mmInst.current_mmId].mmName);
+            }
+            break;
+            case mm_com_id:
+            {
+               // LV_LOG_USER("%s Need to show\n",mMenu[mmInst.current_mmId].mmName);
+            }
+            break;
+            case mm_settings_id:
+            {
+               // LV_LOG_USER("%s Need to show\n",mMenu[mmInst.current_mmId].mmName);
+            }
+            break;
+            case mm_about_id:
+            {
+               // LV_LOG_USER("%s Need to show\n",mMenu[mmInst.current_mmId].mmName);
+            }
+            break;
+            default:
+            {
+               // LV_LOG_USER("%d - Wrong menu\n",mmInst.current_mmId);
+            }
+            break;
+        }
+        idle_time = lv_timer_handler(); /*Returns the time to the next timer execution*/
+        usleep(idle_time * 100);
+    }
+}
+
+void menu_create(void)
 {
     int32_t tab_h = 80;
+    uint8_t mm_idx = 0;
+
 #if LV_FONT_MONTSERRAT_24
     font_large = &lv_font_montserrat_24;
 #endif
@@ -144,13 +194,9 @@ void lv_demo_widgets(void)
 
     tv = lv_tabview_create(lv_screen_active());
     lv_tabview_set_tab_bar_size(tv, tab_h);
-    lv_obj_add_event_cb(tv, tabview_delete_event_cb, LV_EVENT_DELETE, NULL);
+    //lv_obj_add_event_cb(tv, tabview_delete_event_cb, LV_EVENT_DELETE, NULL);
 
     lv_obj_set_style_text_font(lv_screen_active(), font_normal, 0);
-
-    //lv_obj_t * t1 = lv_tabview_add_tab(tv, "Menu");
-    //lv_obj_t * t2 = lv_tabview_add_tab(tv, "Settings");
-    //lv_obj_t * t3 = lv_tabview_add_tab(tv, "About");
 
     if(disp_size == DISP_LARGE) {
         lv_obj_t * tab_bar = lv_tabview_get_tab_bar(tv);
@@ -164,7 +210,7 @@ void lv_demo_widgets(void)
         lv_obj_t * label = lv_label_create(tab_bar);
         lv_obj_add_style(label, &style_title, 0);
         lv_obj_add_flag(label, LV_OBJ_FLAG_IGNORE_LAYOUT);
-        lv_label_set_text_fmt(label, "MDCU v%d.%d.%d", lv_version_major(), lv_version_minor(), lv_version_patch());
+        lv_label_set_text_fmt(label, "MDCU v%d.%d.%d", MDCU_MAJOR_VER, MDCU_MINOR_VER, MDCU_BUILD_VER);
         lv_obj_align_to(label, logo, LV_ALIGN_OUT_RIGHT_TOP, 10, 0);
 
         label = lv_label_create(tab_bar);
@@ -174,12 +220,29 @@ void lv_demo_widgets(void)
         lv_obj_align_to(label, logo, LV_ALIGN_OUT_RIGHT_BOTTOM, 10, 0);
     }
 
-    //profile_create(t1);
-    //analytics_create(t2);
-    menu_create();
-    //shop_create(t3);
+#if LV_USE_DROPDOWN && LV_BUILD_EXAMPLES
+    /*Create a drop down list*/
+    lv_obj_t * dropdown = lv_dropdown_create(lv_scr_act());
+    lv_obj_align(dropdown, LV_ALIGN_TOP_RIGHT, -35, 20);
+    lv_dropdown_set_options_static(dropdown,mMenu[mm_idx].mmName);
+    for(mm_idx=1;mm_idx<mm_count;mm_idx++)
+        lv_dropdown_add_option(dropdown,mMenu[mm_idx].mmName,mMenu[mm_idx].mmId);
 
-    //color_changer_create(tv);
+    /*Set a fixed text to display on the button of the drop-down list*/
+    lv_dropdown_set_text(dropdown, "Menu");
+    lv_obj_set_size(dropdown,100,50);
+
+  /*Use a custom image as down icon and flip it when the list is opened*/
+    LV_IMG_DECLARE(img_caret_down)
+    lv_dropdown_set_symbol(dropdown, &img_caret_down);
+    lv_obj_set_style_transform_angle(dropdown, 1800, LV_PART_INDICATOR | LV_STATE_CHECKED);
+
+    /*In a menu we don't need to show the last clicked item*/
+    lv_dropdown_set_selected_highlight(dropdown, true);
+
+    lv_obj_add_event_cb(dropdown, mm_event_cb, LV_EVENT_VALUE_CHANGED, NULL);
+#endif
+
 }
 
 void lv_demo_widgets_start_slideshow(void)
@@ -206,43 +269,6 @@ void lv_demo_widgets_start_slideshow(void)
 /**********************
  *   STATIC FUNCTIONS
  **********************/
-static void event_cb(lv_event_t * e)
-{
-    lv_obj_t * dropdown = lv_event_get_target(e);
-    char buf[64]={0};
-    lv_dropdown_get_selected_str(dropdown, buf, sizeof(buf));
-    LV_LOG_USER("'%s' is selected", buf);
-}
-
-static void menu_create(void)
-{
-#if LV_USE_DROPDOWN && LV_BUILD_EXAMPLES
-    /*Create a drop down list*/
-    lv_obj_t * dropdown = lv_dropdown_create(lv_scr_act());
-    lv_obj_align(dropdown, LV_ALIGN_TOP_RIGHT, -35, 20);
-    lv_dropdown_set_options(dropdown,   "Overview\n"
-                                        "Protocols\n"
-                                        "Settings\n"
-                                        "About\n"
-                                        "Exit");
-
-    /*Set a fixed text to display on the button of the drop-down list*/
-    lv_dropdown_set_text(dropdown, "Menu");
-    lv_obj_set_size(dropdown,100,50);
-
-  /*Use a custom image as down icon and flip it when the list is opened*/
-    LV_IMG_DECLARE(img_caret_down)
-    lv_dropdown_set_symbol(dropdown, &img_caret_down);
-    lv_obj_set_style_transform_angle(dropdown, 1800, LV_PART_INDICATOR | LV_STATE_CHECKED);
-
-    /*In a menu we don't need to show the last clicked item*/
-    lv_dropdown_set_selected_highlight(dropdown, true);
-
-    lv_obj_add_event_cb(dropdown, event_cb, LV_EVENT_VALUE_CHANGED, NULL);
-#endif
-}
-
-
 static void profile_create(lv_obj_t * parent)
 {
     lv_obj_t * panel1 = lv_obj_create(parent);
