@@ -103,6 +103,11 @@ static MAIN_MENU mMenu[mm_count] ={  {mm_overview_id,"Overview"},
                                      {mm_settings_id,"Settings"},
                                      {mm_about_id,"About"} };
 static MAIN_MENU_INST mmInst;
+static lv_obj_t *rtc_date = NULL;
+
+/* To get RTC time */
+time_t rawtime;
+struct tm *timeinfo=NULL;
 
 /**********************
  *   STATIC FUNCTIONS
@@ -156,6 +161,11 @@ void menu_loop(void)
             }
             break;
         }
+        time(&rawtime);
+        timeinfo = localtime(&rawtime);
+        lv_label_set_text_fmt(rtc_date,"%02d/%02d/%04d %02d:%02d:%02d", timeinfo->tm_mday,(timeinfo->tm_mon+1),(timeinfo->tm_year+1900),
+                                                                        timeinfo->tm_hour, timeinfo->tm_min, timeinfo->tm_sec);
+
         idle_time = lv_timer_handler(); /*Returns the time to the next timer execution*/
         usleep(idle_time * 100);
     }
@@ -197,15 +207,15 @@ void menu_create(void)
     lv_obj_set_style_text_font(lv_screen_active(), font_normal, 0);
 
     if(disp_size == DISP_LARGE) {
-        lv_obj_t * tab_bar = lv_tabview_get_tab_bar(tv);
+        lv_obj_t *tab_bar = lv_tabview_get_tab_bar(tv);
         lv_obj_set_style_pad_left(tab_bar, LV_HOR_RES / 2, 0);
-        lv_obj_t * logo = lv_image_create(tab_bar);
+        lv_obj_t *logo = lv_image_create(tab_bar);
         lv_obj_add_flag(logo, LV_OBJ_FLAG_IGNORE_LAYOUT);
         LV_IMAGE_DECLARE(img_lvgl_logo);
         lv_image_set_src(logo, &img_lvgl_logo);
         lv_obj_align(logo, LV_ALIGN_LEFT_MID, -LV_HOR_RES / 2 + 25, 0);
 
-        lv_obj_t * label = lv_label_create(tab_bar);
+        lv_obj_t *label = lv_label_create(tab_bar);
         lv_obj_add_style(label, &style_title, 0);
         lv_obj_add_flag(label, LV_OBJ_FLAG_IGNORE_LAYOUT);
         lv_label_set_text_fmt(label, "MDCU v%d.%d.%d", MDCU_MAJOR_VER, MDCU_MINOR_VER, MDCU_BUILD_VER);
@@ -216,19 +226,25 @@ void menu_create(void)
         lv_obj_add_flag(label, LV_OBJ_FLAG_IGNORE_LAYOUT);
         lv_obj_add_style(label, &style_text_muted, 0);
         lv_obj_align_to(label, logo, LV_ALIGN_OUT_RIGHT_BOTTOM, 10, 0);
+
+        rtc_date = lv_label_create(tab_bar);
+        lv_label_set_text(rtc_date, "00/00/0000 00:00:00");
+        lv_obj_add_flag(rtc_date, LV_OBJ_FLAG_IGNORE_LAYOUT);
+        lv_obj_add_style(rtc_date, &style_text_muted, 0);
+        lv_obj_align(rtc_date, LV_ALIGN_TOP_RIGHT, -10, 6);
     }
 
 #if LV_USE_DROPDOWN && LV_BUILD_EXAMPLES
     /*Create a drop down list*/
     lv_obj_t * dropdown = lv_dropdown_create(lv_scr_act());
-    lv_obj_align(dropdown, LV_ALIGN_TOP_RIGHT, -35, 20);
+    lv_obj_align(dropdown, LV_ALIGN_TOP_RIGHT, -35, 30);
     lv_dropdown_set_options_static(dropdown,mMenu[mm_idx].mmName);
     for(mm_idx=1;mm_idx<mm_count;mm_idx++)
         lv_dropdown_add_option(dropdown,mMenu[mm_idx].mmName,mMenu[mm_idx].mmId);
 
     /*Set a fixed text to display on the button of the drop-down list*/
     lv_dropdown_set_text(dropdown, "Menu");
-    lv_obj_set_size(dropdown,100,50);
+    lv_obj_set_size(dropdown,90,40);
 
   /*Use a custom image as down icon and flip it when the list is opened*/
     LV_IMG_DECLARE(img_caret_down)
