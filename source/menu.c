@@ -51,7 +51,6 @@ static void scroll_anim_y_cb(void * var, int32_t v);
 static void delete_timer_event_cb(lv_event_t * e);
 static void slideshow_anim_completed_cb(lv_anim_t * a_old);
 static void scale3_delete_event_cb(lv_event_t * e);
-static void tabview_delete_event_cb(lv_event_t * e);
 
 /**********************
  *  STATIC VARIABLES
@@ -194,7 +193,6 @@ void menu_create(void)
 
     tv = lv_tabview_create(lv_screen_active());
     lv_tabview_set_tab_bar_size(tv, tab_h);
-    //lv_obj_add_event_cb(tv, tabview_delete_event_cb, LV_EVENT_DELETE, NULL);
 
     lv_obj_set_style_text_font(lv_screen_active(), font_normal, 0);
 
@@ -1720,15 +1718,4 @@ static void scale3_delete_event_cb(lv_event_t * e)
     }
 }
 
-static void tabview_delete_event_cb(lv_event_t * e)
-{
-    lv_event_code_t code = lv_event_get_code(e);
-
-    if(code == LV_EVENT_DELETE) {
-        lv_style_reset(&style_text_muted);
-        lv_style_reset(&style_title);
-        lv_style_reset(&style_icon);
-        lv_style_reset(&style_bullet);
-    }
-}
 #endif
