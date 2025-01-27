@@ -111,8 +111,13 @@ cmake --install . --prefix "./install"
 
 ## Compile this repo ##
 ### Now we can compile this sample repo using cross compiled lvgl ###
+
 ```
 make clean;make
 ```
-
 The target binary will be in bin folder.
+
+Note: It will help to solve 'stubs-soft.h' miss error
+```
+sudo cp /usr/arm-linux-gnueabihf/include/gnu/stubs-soft.h /opt/st/mp1som/2.7-snapshot/sysroots/cortexa7t2hf-neon-vfpv4-openstlinux_weston-linux-gnueabi/usr/include/gnu/
+```
