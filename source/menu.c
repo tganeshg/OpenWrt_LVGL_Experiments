@@ -132,7 +132,13 @@ void menu_loop(void)
         {
             case mm_overview_id:
             {
-                //LV_LOG_USER("%s Need to show\n",mMenu[mmInst.current_mmId].mmName);
+                if(mmInst.pntState == paint_static)
+                {
+                    //profile_create(lv_scr_act());
+                    mmInst.pntState == paint_dynamic;
+                }
+                //else //paint_dynamic
+                  //  update_overview(mmInst.me);
             }
             break;
             case mm_protocols_id:
@@ -236,7 +242,7 @@ void menu_create(void)
 
 #if LV_USE_DROPDOWN && LV_BUILD_EXAMPLES
     /*Create a drop down list*/
-    lv_obj_t * dropdown = lv_dropdown_create(lv_scr_act());
+    lv_obj_t *dropdown = lv_dropdown_create(lv_scr_act());
     lv_obj_align(dropdown, LV_ALIGN_TOP_RIGHT, -35, 30);
     lv_dropdown_set_options_static(dropdown,mMenu[mm_idx].mmName);
     for(mm_idx=1;mm_idx<mm_count;mm_idx++)
@@ -246,7 +252,7 @@ void menu_create(void)
     lv_dropdown_set_text(dropdown, "Menu");
     lv_obj_set_size(dropdown,90,40);
 
-  /*Use a custom image as down icon and flip it when the list is opened*/
+    /*Use a custom image as down icon and flip it when the list is opened*/
     LV_IMG_DECLARE(img_caret_down)
     lv_dropdown_set_symbol(dropdown, &img_caret_down);
     lv_obj_set_style_transform_angle(dropdown, 1800, LV_PART_INDICATOR | LV_STATE_CHECKED);
@@ -286,6 +292,7 @@ void lv_demo_widgets_start_slideshow(void)
 static void profile_create(lv_obj_t * parent)
 {
     lv_obj_t * panel1 = lv_obj_create(parent);
+    lv_obj_set_size(panel1, lv_pct(100), lv_pct(100));
     lv_obj_set_height(panel1, LV_SIZE_CONTENT);
 
     LV_IMAGE_DECLARE(img_demo_widgets_avatar);

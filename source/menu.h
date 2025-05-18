@@ -35,6 +35,12 @@ typedef enum {
 
 typedef enum
 {
+    paint_static,
+    paint_dynamic
+}PAINT_STATE;
+
+typedef enum
+{
     mm_overview_id,
     mm_protocols_id,
     mm_com_id,
@@ -51,7 +57,9 @@ typedef struct
 
 typedef struct
 {
+    lv_obj_t *me;
     uint32_t current_mmId;
+    PAINT_STATE pntState;
 }MAIN_MENU_INST;
 
 /**********************
