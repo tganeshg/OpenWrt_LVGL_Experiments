@@ -57,9 +57,9 @@ typedef struct
 
 typedef struct
 {
-    lv_obj_t *me;
-    uint32_t current_mmId;
-    PAINT_STATE pntState;
+    lv_obj_t        *tv;
+    uint32_t        current_mmId;
+    PAINT_STATE     pntState;
 }MAIN_MENU_INST;
 
 /**********************

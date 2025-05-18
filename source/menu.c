@@ -125,35 +125,68 @@ static void mm_event_cb(lv_event_t * e)
 void menu_loop(void)
 {
     uint32_t idle_time = 0;
+    uint32_t mm_id = mm_overview_id;
 
     /*Handle LVGL tasks*/
     while(1) {
+        if(mm_id != mmInst.current_mmId)
+        {
+            mm_id = mmInst.current_mmId;
+            mmInst.pntState = paint_static;
+        }
+
         switch(mmInst.current_mmId)
         {
             case mm_overview_id:
             {
                 if(mmInst.pntState == paint_static)
                 {
-                    //profile_create(lv_scr_act());
-                    mmInst.pntState == paint_dynamic;
+                    lv_obj_t *tab1 = lv_win_get_content(mmInst.tv);
+                    lv_obj_clean(tab1);
+                    analytics_create(tab1);
+                    mmInst.pntState = paint_dynamic;
                 }
-                //else //paint_dynamic
-                  //  update_overview(mmInst.me);
+               // else //paint_dynamic
+                //  LV_LOG_USER("DYN>> %s Need to show\n",mMenu[mmInst.current_mmId].mmName);
             }
             break;
             case mm_protocols_id:
             {
-                //LV_LOG_USER("%s Need to show\n",mMenu[mmInst.current_mmId].mmName);
+                if(mmInst.pntState == paint_static)
+                {
+                    lv_obj_t *tab1 = lv_win_get_content(mmInst.tv);
+                    lv_obj_clean(tab1);
+                    profile_create(tab1);
+                    mmInst.pntState = paint_dynamic;
+                }
+               // else //paint_dynamic
+                //  LV_LOG_USER("DYN>> %s Need to show\n",mMenu[mmInst.current_mmId].mmName);
             }
             break;
             case mm_com_id:
             {
-               // LV_LOG_USER("%s Need to show\n",mMenu[mmInst.current_mmId].mmName);
+                if(mmInst.pntState == paint_static)
+                {
+                    lv_obj_t *tab1 = lv_win_get_content(mmInst.tv);
+                    lv_obj_clean(tab1);
+                    shop_create(tab1);
+                    mmInst.pntState = paint_dynamic;
+                }
+               // else //paint_dynamic
+                //  LV_LOG_USER("DYN>> %s Need to show\n",mMenu[mmInst.current_mmId].mmName);
             }
             break;
             case mm_settings_id:
             {
-               // LV_LOG_USER("%s Need to show\n",mMenu[mmInst.current_mmId].mmName);
+                if(mmInst.pntState == paint_static)
+                {
+                    lv_obj_t *tab1 = lv_win_get_content(mmInst.tv);
+                    lv_obj_clean(tab1);
+                    color_changer_create(tab1);
+                    mmInst.pntState = paint_dynamic;
+                }
+               // else //paint_dynamic
+                //  LV_LOG_USER("DYN>> %s Need to show\n",mMenu[mmInst.current_mmId].mmName);
             }
             break;
             case mm_about_id:
@@ -179,7 +212,7 @@ void menu_loop(void)
 
 void menu_create(void)
 {
-    int32_t tab_h = 80;
+    int32_t tab_h = 90;
     uint8_t mm_idx = 0;
 
 #if LV_FONT_MONTSERRAT_24
@@ -207,13 +240,12 @@ void menu_create(void)
     lv_style_set_border_width(&style_bullet, 0);
     lv_style_set_radius(&style_bullet, LV_RADIUS_CIRCLE);
 
-    tv = lv_tabview_create(lv_screen_active());
-    lv_tabview_set_tab_bar_size(tv, tab_h);
-
     lv_obj_set_style_text_font(lv_screen_active(), font_normal, 0);
+    mmInst.tv = lv_win_create(lv_screen_active());
 
     if(disp_size == DISP_LARGE) {
-        lv_obj_t *tab_bar = lv_tabview_get_tab_bar(tv);
+        lv_obj_t *tab_bar = lv_win_get_header(mmInst.tv);
+        lv_obj_set_size(tab_bar, LV_HOR_RES, tab_h);
         lv_obj_set_style_pad_left(tab_bar, LV_HOR_RES / 2, 0);
         lv_obj_t *logo = lv_image_create(tab_bar);
         lv_obj_add_flag(logo, LV_OBJ_FLAG_IGNORE_LAYOUT);
@@ -243,7 +275,7 @@ void menu_create(void)
 #if LV_USE_DROPDOWN && LV_BUILD_EXAMPLES
     /*Create a drop down list*/
     lv_obj_t *dropdown = lv_dropdown_create(lv_scr_act());
-    lv_obj_align(dropdown, LV_ALIGN_TOP_RIGHT, -35, 30);
+    lv_obj_align(dropdown, LV_ALIGN_TOP_RIGHT, -35, 40);
     lv_dropdown_set_options_static(dropdown,mMenu[mm_idx].mmName);
     for(mm_idx=1;mm_idx<mm_count;mm_idx++)
         lv_dropdown_add_option(dropdown,mMenu[mm_idx].mmName,mMenu[mm_idx].mmId);
@@ -262,8 +294,9 @@ void menu_create(void)
 
     lv_obj_add_event_cb(dropdown, mm_event_cb, LV_EVENT_VALUE_CHANGED, NULL);
 #endif
-
 }
+
+/* Old code - just kept for reference */
 
 void lv_demo_widgets_start_slideshow(void)
 {
